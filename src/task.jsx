@@ -6,6 +6,7 @@ const Container = styled.div`
   border: 1px solid lightgrey;
   border-radius: 2px;
   padding: 8px;
+  cursor: pointer;
   margin-bottom: 8px;
   background-color: ${props => (props.isDragging ? 'lightgreen' : 'white') };
 `;
@@ -24,7 +25,7 @@ class Task extends Component {
             {...provided.dragHandleProps}
             isDragging={snapshot.isDragging}
           >
-            {this.props.task.content}
+            {this.props.task.name}
           </Container>
         )}
         

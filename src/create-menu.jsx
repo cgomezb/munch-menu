@@ -1,15 +1,15 @@
-import React from 'react';
-import '@atlaskit/css-reset';
-import { DragDropContext } from 'react-beautiful-dnd';
-import Column from './column';
+import React from "react";
+import "@atlaskit/css-reset";
+import { DragDropContext } from "react-beautiful-dnd";
+import Column from "./column";
 
 class CreateMenu extends React.Component {
   state = this.props.initialData;
 
-  onDragEnd = result => {
+  onDragEnd = (result) => {
     document.body.style.color = "inherit";
     document.body.style.backgroundColor = "inherit";
-    const { destination, source, draggableId } = result;
+    const { destination, source } = result;
 
     if (!destination) {
       return;
@@ -22,56 +22,53 @@ class CreateMenu extends React.Component {
       return;
     }
 
-    const column = this.state.columns[source.droppableId];
-    const newTaskIds = Array.from(column.taskIds);
-    newTaskIds.splice(source.index, 1);
-    newTaskIds.splice(destination.index, 0, draggableId);
-
-    const newColumn = {
-      ...column,
-      taskIds: newTaskIds,
-    };
+    const newOptions = Array.from(this.state.options);
+    const elementToMove = newOptions.splice(source.index, 1)[0];
+    newOptions.splice(destination.index, 0, elementToMove);
 
     const newState = {
-      ...this.state,
-      columns: {
-        ...this.state.columns,
-        [newColumn.id]: newColumn
-      }
+      options: newOptions,
     };
 
     this.setState(newState);
-  }
+  };
 
-  onDragUpdate = update => {
+  onDragUpdate = (update) => {
     const { destination } = update;
     const opacity = destination
-      ? destination.index / Object.keys(this.state.tasks).length
+      ? destination.index / Object.keys(this.state.options).length
       : 0;
 
     document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`;
-  }
+  };
 
   onDragStart = () => {
-    document.body.style.color = "orange";
-    document.body.style.transition = 'background-color 0.2s ease';
-  }
-  
-  render() {
-    return (
-      <DragDropContext 
-        onDragEnd={this.onDragEnd}
-        onDragStart={this.onDragStart}
-        onDragUpdate={this.onDragUpdate}
-      >
-        {this.state.columnOrder.map((columnId) => {
-          const column = this.state.columns[columnId];
-          const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
+    document.body.style.color = "gray";
+    document.body.style.transition = "background-color 0.2s ease";
+  };
 
-          return <Column key={column.id} column={column} tasks={tasks} />;
-        })}
-      </DragDropContext>
-    )
+  onSave = () => {
+    console.table(this.state.options);
+  };
+
+  render() {
+    const column = {
+      id: "1",
+      title: "Menu",
+    };
+
+    return (
+      <React.Fragment>
+        <DragDropContext
+          onDragEnd={this.onDragEnd}
+          onDragStart={this.onDragStart}
+          onDragUpdate={this.onDragUpdate}
+        >
+          <Column key={column.id} column={column} tasks={this.state.options} />
+        </DragDropContext>
+        <button onClick={this.onSave}>Save</button>
+      </React.Fragment>
+    );
   }
 }
 
